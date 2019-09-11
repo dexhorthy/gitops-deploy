@@ -54,9 +54,14 @@ spec:
           name: http
           protocol: TCP
         readinessProbe:
+          failureThreshold: 2
           httpGet:
             path: /
             port: http
+          initialDelaySeconds: 5
+          periodSeconds: 3
+          successThreshold: 1
+          timeoutSeconds: 5
         resources: null
         securityContext:
           allowPrivilegeEscalation: false
