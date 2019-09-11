@@ -43,7 +43,10 @@ spec:
         release: better-db
     spec:
       containers:
-      - image: nginx:1.15.1
+      - env:
+        - name: LOG_LEVEL
+          value: info
+        image: nginx:1.15.2
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
