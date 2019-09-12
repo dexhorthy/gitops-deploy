@@ -1,0 +1,85 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: better-db
+    release: better-db
+    this: is-not-a
+  name: better-db
+spec:
+  ports:
+  - name: tls-port
+    port: 8443
+    protocol: TCP
+    targetPort: 8443
+  - name: http-port
+    port: 81
+    protocol: TCP
+    targetPort: 8000
+  selector:
+    app: better-db
+    release: better-db
+  type: LoadBalancer
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  labels:
+    app: better-db
+    release: better-db
+  name: better-db
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: better-db
+      release: better-db
+  template:
+    metadata:
+      labels:
+        app: better-db
+        release: better-db
+    spec:
+      containers:
+      - image: nginx:1.15.1
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          httpGet:
+            path: /
+            port: http
+        name: better-db
+        ports:
+        - containerPort: 80
+          name: http
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /
+            port: http
+        resources: null
+        securityContext:
+          allowPrivilegeEscalation: true
+        volumeMounts:
+        - mountPath: /vault/
+          name: vault-env
+        - mountPath: /vault/tls/ca.crt
+          name: vault-tls
+          subPath: ca.crt
+      initContainers:
+      - command:
+        - sh
+        - -c
+        - cp /usr/local/bin/vault-env /vault/
+        image: banzaicloud/vault-env:latest
+        imagePullPolicy: IfNotPresent
+        name: copy-vault-env
+        volumeMounts:
+        - mountPath: /vault/
+          name: vault-env
+      volumes:
+      - emptyDir:
+          medium: Memory
+        name: vault-env
+      - name: vault-tls
+        secret:
+          secretName: vault-tls
