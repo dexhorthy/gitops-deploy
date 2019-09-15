@@ -206,6 +206,7 @@ rules:
   resources:
   - nodes
   - nodes/proxy
+  - nodes/metrics
   - services
   - endpoints
   - pods
@@ -666,7 +667,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-9.1.0
+        chart: prometheus-9.1.1
         component: alertmanager
         heritage: Tiller
         release: prometheus
@@ -745,7 +746,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-9.1.0
+        chart: prometheus-9.1.1
         component: kube-state-metrics
         heritage: Tiller
         release: prometheus
@@ -782,7 +783,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-9.1.0
+        chart: prometheus-9.1.1
         component: pushgateway
         heritage: Tiller
         release: prometheus
@@ -825,7 +826,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-9.1.0
+        chart: prometheus-9.1.1
         component: server
         heritage: Tiller
         release: prometheus
@@ -906,7 +907,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-9.1.0
+        chart: prometheus-9.1.1
         component: node-exporter
         heritage: Tiller
         release: prometheus
