@@ -441,14 +441,14 @@ metadata:
   labels:
     app: consul
     release: consul
-  name: consul-consul-test-yxu4q
+  name: consul-consul-test
 spec:
   containers:
   - command:
     - /bin/sh
     - -ec
     - |
-      export VALUE="vs3efey7qxqaq4ywpvjmrghz"
+      export VALUE="consul"
       export CONSUL_HTTP_ADDR="${HOST_IP}:8500"
       consul kv delete _consul_helm_test
       consul kv put _consul_helm_test $VALUE
