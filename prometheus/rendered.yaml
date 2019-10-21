@@ -206,6 +206,7 @@ rules:
   resources:
   - nodes
   - nodes/proxy
+  - nodes/metrics
   - services
   - endpoints
   - pods
@@ -666,7 +667,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-9.1.0
+        chart: prometheus-9.2.0
         component: alertmanager
         heritage: Tiller
         release: prometheus
@@ -745,7 +746,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-9.1.0
+        chart: prometheus-9.2.0
         component: kube-state-metrics
         heritage: Tiller
         release: prometheus
@@ -782,7 +783,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-9.1.0
+        chart: prometheus-9.2.0
         component: pushgateway
         heritage: Tiller
         release: prometheus
@@ -825,7 +826,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-9.1.0
+        chart: prometheus-9.2.0
         component: server
         heritage: Tiller
         release: prometheus
@@ -849,7 +850,7 @@ spec:
         - --web.console.libraries=/etc/prometheus/console_libraries
         - --web.console.templates=/etc/prometheus/consoles
         - --web.enable-lifecycle
-        image: prom/prometheus:v2.11.1
+        image: prom/prometheus:v2.13.1
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
@@ -906,7 +907,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-9.1.0
+        chart: prometheus-9.2.0
         component: node-exporter
         heritage: Tiller
         release: prometheus
