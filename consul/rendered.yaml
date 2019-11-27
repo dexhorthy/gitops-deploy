@@ -363,6 +363,7 @@ spec:
             -advertise="${POD_IP}" \
             -bind=0.0.0.0 \
             -client=0.0.0.0 \
+            -hcl="ports { grpc = 8502 }" \
             -config-dir=/consul/config \
             -datacenter=dc1 \
             -data-dir=/consul/data \
