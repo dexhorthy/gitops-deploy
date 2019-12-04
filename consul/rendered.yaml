@@ -360,7 +360,7 @@ spec:
 
           exec /bin/consul agent \
             -node="${NODE}" \
-            -advertise="${POD_IP}" \
+            -advertise="${ADVERTISE_IP}" \
             -bind=0.0.0.0 \
             -client=0.0.0.0 \
             -hcl="ports { grpc = 8502 }" \
@@ -372,7 +372,7 @@ spec:
             -retry-join=${CONSUL_FULLNAME}-server-2.${CONSUL_FULLNAME}-server.${NAMESPACE}.svc \
             -domain=consul
         env:
-        - name: POD_IP
+        - name: ADVERTISE_IP
           valueFrom:
             fieldRef:
               fieldPath: status.podIP
@@ -401,7 +401,11 @@ spec:
           hostPort: 8502
           name: grpc
         - containerPort: 8301
-          name: serflan
+          name: serflan-tcp
+          protocol: TCP
+        - containerPort: 8301
+          name: serflan-udp
+          protocol: UDP
         - containerPort: 8302
           name: serfwan
         - containerPort: 8300
