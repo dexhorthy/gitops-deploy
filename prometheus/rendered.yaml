@@ -558,6 +558,7 @@ spec:
     app: prometheus
     component: alertmanager
     release: prometheus
+  sessionAffinity: None
   type: ClusterIP
 ---
 apiVersion: v1
@@ -646,6 +647,7 @@ spec:
     app: prometheus
     component: server
     release: prometheus
+  sessionAffinity: None
   type: ClusterIP
 ---
 apiVersion: apps/v1
@@ -667,7 +669,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-9.5.0
+        chart: prometheus-9.5.1
         component: alertmanager
         heritage: Tiller
         release: prometheus
@@ -746,7 +748,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-9.5.0
+        chart: prometheus-9.5.1
         component: kube-state-metrics
         heritage: Tiller
         release: prometheus
@@ -783,7 +785,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-9.5.0
+        chart: prometheus-9.5.1
         component: pushgateway
         heritage: Tiller
         release: prometheus
@@ -826,7 +828,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-9.5.0
+        chart: prometheus-9.5.1
         component: server
         heritage: Tiller
         release: prometheus
@@ -907,7 +909,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-9.5.0
+        chart: prometheus-9.5.1
         component: node-exporter
         heritage: Tiller
         release: prometheus
