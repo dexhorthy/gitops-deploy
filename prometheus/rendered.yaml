@@ -206,6 +206,7 @@ rules:
   resources:
   - nodes
   - nodes/proxy
+  - nodes/metrics
   - services
   - endpoints
   - pods
@@ -557,6 +558,7 @@ spec:
     app: prometheus
     component: alertmanager
     release: prometheus
+  sessionAffinity: None
   type: ClusterIP
 ---
 apiVersion: v1
@@ -645,9 +647,10 @@ spec:
     app: prometheus
     component: server
     release: prometheus
+  sessionAffinity: None
   type: ClusterIP
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -666,7 +669,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-9.1.0
+        chart: prometheus-9.5.1
         component: alertmanager
         heritage: Tiller
         release: prometheus
@@ -726,7 +729,7 @@ spec:
         persistentVolumeClaim:
           claimName: prometheus-alertmanager
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -745,7 +748,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-9.1.0
+        chart: prometheus-9.5.1
         component: kube-state-metrics
         heritage: Tiller
         release: prometheus
@@ -763,7 +766,7 @@ spec:
         runAsUser: 65534
       serviceAccountName: prometheus-kube-state-metrics
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -782,7 +785,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-9.1.0
+        chart: prometheus-9.5.1
         component: pushgateway
         heritage: Tiller
         release: prometheus
@@ -806,7 +809,7 @@ spec:
         runAsUser: 65534
       serviceAccountName: prometheus-pushgateway
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -825,7 +828,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-9.1.0
+        chart: prometheus-9.5.1
         component: server
         heritage: Tiller
         release: prometheus
@@ -849,7 +852,7 @@ spec:
         - --web.console.libraries=/etc/prometheus/console_libraries
         - --web.console.templates=/etc/prometheus/consoles
         - --web.enable-lifecycle
-        image: prom/prometheus:v2.11.1
+        image: prom/prometheus:v2.13.1
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
@@ -888,7 +891,7 @@ spec:
         persistentVolumeClaim:
           claimName: prometheus-server
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   labels:
@@ -906,7 +909,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-9.1.0
+        chart: prometheus-9.5.1
         component: node-exporter
         heritage: Tiller
         release: prometheus
@@ -942,6 +945,84 @@ spec:
         name: sys
   updateStrategy:
     type: RollingUpdate
+---
+apiVersion: extensions/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  annotations: null
+  labels:
+    app: prometheus
+    component: alertmanager
+    release: prometheus
+  name: prometheus-alertmanager
+spec:
+  allowPrivilegeEscalation: false
+  allowedHostPaths:
+  - pathPrefix: /etc
+    readOnly: true
+  - pathPrefix: /data
+  fsGroup:
+    ranges:
+    - max: 65535
+      min: 1
+    rule: MustRunAs
+  hostIPC: false
+  hostNetwork: false
+  hostPID: false
+  privileged: false
+  readOnlyRootFilesystem: true
+  requiredDropCapabilities:
+  - ALL
+  runAsUser:
+    rule: RunAsAny
+  seLinux:
+    rule: RunAsAny
+  supplementalGroups:
+    ranges:
+    - max: 65535
+      min: 1
+    rule: MustRunAs
+  volumes:
+  - configMap
+  - persistentVolumeClaim
+  - emptyDir
+  - secret
+---
+apiVersion: extensions/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  annotations: null
+  labels:
+    app: prometheus
+    component: kube-state-metrics
+    release: prometheus
+  name: prometheus-kube-state-metrics
+spec:
+  allowPrivilegeEscalation: false
+  allowedHostPaths: []
+  fsGroup:
+    ranges:
+    - max: 65535
+      min: 1
+    rule: MustRunAs
+  hostIPC: false
+  hostNetwork: false
+  hostPID: false
+  privileged: false
+  readOnlyRootFilesystem: true
+  requiredDropCapabilities:
+  - ALL
+  runAsUser:
+    rule: RunAsAny
+  seLinux:
+    rule: RunAsAny
+  supplementalGroups:
+    ranges:
+    - max: 65535
+      min: 1
+    rule: MustRunAs
+  volumes:
+  - secret
 ---
 apiVersion: extensions/v1beta1
 kind: PodSecurityPolicy
@@ -988,85 +1069,7 @@ spec:
   - hostPath
   - secret
 ---
-apiVersion: policy/v1beta1
-kind: PodSecurityPolicy
-metadata:
-  annotations: null
-  labels:
-    app: prometheus
-    component: alertmanager
-    release: prometheus
-  name: prometheus-alertmanager
-spec:
-  allowPrivilegeEscalation: false
-  allowedHostPaths:
-  - pathPrefix: /etc
-    readOnly: true
-  - pathPrefix: /data
-  fsGroup:
-    ranges:
-    - max: 65535
-      min: 1
-    rule: MustRunAs
-  hostIPC: false
-  hostNetwork: false
-  hostPID: false
-  privileged: false
-  readOnlyRootFilesystem: true
-  requiredDropCapabilities:
-  - ALL
-  runAsUser:
-    rule: RunAsAny
-  seLinux:
-    rule: RunAsAny
-  supplementalGroups:
-    ranges:
-    - max: 65535
-      min: 1
-    rule: MustRunAs
-  volumes:
-  - configMap
-  - persistentVolumeClaim
-  - emptyDir
-  - secret
----
-apiVersion: policy/v1beta1
-kind: PodSecurityPolicy
-metadata:
-  annotations: null
-  labels:
-    app: prometheus
-    component: kube-state-metrics
-    release: prometheus
-  name: prometheus-kube-state-metrics
-spec:
-  allowPrivilegeEscalation: false
-  allowedHostPaths: []
-  fsGroup:
-    ranges:
-    - max: 65535
-      min: 1
-    rule: MustRunAs
-  hostIPC: false
-  hostNetwork: false
-  hostPID: false
-  privileged: false
-  readOnlyRootFilesystem: true
-  requiredDropCapabilities:
-  - ALL
-  runAsUser:
-    rule: RunAsAny
-  seLinux:
-    rule: RunAsAny
-  supplementalGroups:
-    ranges:
-    - max: 65535
-      min: 1
-    rule: MustRunAs
-  volumes:
-  - secret
----
-apiVersion: policy/v1beta1
+apiVersion: extensions/v1beta1
 kind: PodSecurityPolicy
 metadata:
   annotations: null
@@ -1104,7 +1107,7 @@ spec:
   - persistentVolumeClaim
   - secret
 ---
-apiVersion: policy/v1beta1
+apiVersion: extensions/v1beta1
 kind: PodSecurityPolicy
 metadata:
   annotations: null
