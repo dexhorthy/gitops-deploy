@@ -337,6 +337,8 @@ metadata:
 ---
 apiVersion: v1
 data:
+  alerting_rules.yml: |
+    {}
   alerts: |
     {}
   prometheus.yml: |
@@ -345,6 +347,8 @@ data:
       scrape_interval: 1m
       scrape_timeout: 10s
     rule_files:
+    - /etc/config/recording_rules.yml
+    - /etc/config/alerting_rules.yml
     - /etc/config/rules
     - /etc/config/alerts
     scrape_configs:
@@ -530,6 +534,8 @@ data:
         - source_labels: [__meta_kubernetes_pod_container_port_number]
           regex:
           action: drop
+  recording_rules.yml: |
+    {}
   rules: |
     {}
 kind: ConfigMap
@@ -669,7 +675,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-9.5.1
+        chart: prometheus-9.5.2
         component: alertmanager
         heritage: Tiller
         release: prometheus
@@ -748,7 +754,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-9.5.1
+        chart: prometheus-9.5.2
         component: kube-state-metrics
         heritage: Tiller
         release: prometheus
@@ -785,7 +791,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-9.5.1
+        chart: prometheus-9.5.2
         component: pushgateway
         heritage: Tiller
         release: prometheus
@@ -828,7 +834,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-9.5.1
+        chart: prometheus-9.5.2
         component: server
         heritage: Tiller
         release: prometheus
@@ -909,7 +915,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-9.5.1
+        chart: prometheus-9.5.2
         component: node-exporter
         heritage: Tiller
         release: prometheus
