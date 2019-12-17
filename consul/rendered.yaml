@@ -183,6 +183,7 @@ kind: StatefulSet
 metadata:
   labels:
     app: consul
+    component: server
     release: consul
   name: consul-consul-server
   namespace: default
@@ -248,7 +249,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
-        image: consul:1.5.0
+        image: consul:1.6.2
         lifecycle:
           preStop:
             exec:
@@ -360,9 +361,10 @@ spec:
 
           exec /bin/consul agent \
             -node="${NODE}" \
-            -advertise="${POD_IP}" \
+            -advertise="${ADVERTISE_IP}" \
             -bind=0.0.0.0 \
             -client=0.0.0.0 \
+            -hcl="ports { grpc = 8502 }" \
             -config-dir=/consul/config \
             -datacenter=dc1 \
             -data-dir=/consul/data \
@@ -371,7 +373,7 @@ spec:
             -retry-join=${CONSUL_FULLNAME}-server-2.${CONSUL_FULLNAME}-server.${NAMESPACE}.svc \
             -domain=consul
         env:
-        - name: POD_IP
+        - name: ADVERTISE_IP
           valueFrom:
             fieldRef:
               fieldPath: status.podIP
@@ -383,7 +385,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: spec.nodeName
-        image: consul:1.5.0
+        image: consul:1.6.2
         lifecycle:
           preStop:
             exec:
@@ -400,7 +402,11 @@ spec:
           hostPort: 8502
           name: grpc
         - containerPort: 8301
-          name: serflan
+          name: serflan-tcp
+          protocol: TCP
+        - containerPort: 8301
+          name: serflan-udp
+          protocol: UDP
         - containerPort: 8302
           name: serfwan
         - containerPort: 8300
@@ -441,14 +447,14 @@ metadata:
   labels:
     app: consul
     release: consul
-  name: consul-consul-test-yxu4q
+  name: consul-consul-test
 spec:
   containers:
   - command:
     - /bin/sh
     - -ec
     - |
-      export VALUE="vs3efey7qxqaq4ywpvjmrghz"
+      export VALUE="consul"
       export CONSUL_HTTP_ADDR="${HOST_IP}:8500"
       consul kv delete _consul_helm_test
       consul kv put _consul_helm_test $VALUE
@@ -459,6 +465,6 @@ spec:
       valueFrom:
         fieldRef:
           fieldPath: status.hostIP
-    image: consul:1.5.0
+    image: consul:1.6.2
     name: consul-test
   restartPolicy: Never
