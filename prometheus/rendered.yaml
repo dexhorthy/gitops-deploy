@@ -675,7 +675,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-9.5.3
+        chart: prometheus-9.5.4
         component: alertmanager
         heritage: Tiller
         release: prometheus
@@ -754,7 +754,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-9.5.3
+        chart: prometheus-9.5.4
         component: kube-state-metrics
         heritage: Tiller
         release: prometheus
@@ -791,7 +791,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-9.5.3
+        chart: prometheus-9.5.4
         component: pushgateway
         heritage: Tiller
         release: prometheus
@@ -834,7 +834,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-9.5.3
+        chart: prometheus-9.5.4
         component: server
         heritage: Tiller
         release: prometheus
@@ -861,19 +861,23 @@ spec:
         image: prom/prometheus:v2.13.1
         imagePullPolicy: IfNotPresent
         livenessProbe:
+          failureThreshold: 3
           httpGet:
             path: /-/healthy
             port: 9090
           initialDelaySeconds: 30
+          successThreshold: 1
           timeoutSeconds: 30
         name: prometheus-server
         ports:
         - containerPort: 9090
         readinessProbe:
+          failureThreshold: 3
           httpGet:
             path: /-/ready
             port: 9090
           initialDelaySeconds: 30
+          successThreshold: 1
           timeoutSeconds: 30
         resources: {}
         volumeMounts:
@@ -915,7 +919,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-9.5.3
+        chart: prometheus-9.5.4
         component: node-exporter
         heritage: Tiller
         release: prometheus
