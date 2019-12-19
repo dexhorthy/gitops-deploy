@@ -206,6 +206,7 @@ rules:
   resources:
   - nodes
   - nodes/proxy
+  - nodes/metrics
   - services
   - endpoints
   - pods
@@ -336,6 +337,8 @@ metadata:
 ---
 apiVersion: v1
 data:
+  alerting_rules.yml: |
+    {}
   alerts: |
     {}
   prometheus.yml: |
@@ -344,6 +347,8 @@ data:
       scrape_interval: 1m
       scrape_timeout: 10s
     rule_files:
+    - /etc/config/recording_rules.yml
+    - /etc/config/alerting_rules.yml
     - /etc/config/rules
     - /etc/config/alerts
     scrape_configs:
@@ -529,6 +534,8 @@ data:
         - source_labels: [__meta_kubernetes_pod_container_port_number]
           regex:
           action: drop
+  recording_rules.yml: |
+    {}
   rules: |
     {}
 kind: ConfigMap
@@ -557,6 +564,7 @@ spec:
     app: prometheus
     component: alertmanager
     release: prometheus
+  sessionAffinity: None
   type: ClusterIP
 ---
 apiVersion: v1
@@ -645,9 +653,10 @@ spec:
     app: prometheus
     component: server
     release: prometheus
+  sessionAffinity: None
   type: ClusterIP
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -666,7 +675,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-9.1.0
+        chart: prometheus-9.7.0
         component: alertmanager
         heritage: Tiller
         release: prometheus
@@ -726,7 +735,7 @@ spec:
         persistentVolumeClaim:
           claimName: prometheus-alertmanager
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -745,7 +754,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-9.1.0
+        chart: prometheus-9.7.0
         component: kube-state-metrics
         heritage: Tiller
         release: prometheus
@@ -763,7 +772,7 @@ spec:
         runAsUser: 65534
       serviceAccountName: prometheus-kube-state-metrics
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -782,7 +791,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-9.1.0
+        chart: prometheus-9.7.0
         component: pushgateway
         heritage: Tiller
         release: prometheus
@@ -791,12 +800,18 @@ spec:
       - args: []
         image: prom/pushgateway:v0.8.0
         imagePullPolicy: IfNotPresent
+        livenessProbe:
+          httpGet:
+            path: /-/healthy
+            port: 9091
+          initialDelaySeconds: 10
+          timeoutSeconds: 10
         name: prometheus-pushgateway
         ports:
         - containerPort: 9091
         readinessProbe:
           httpGet:
-            path: /#/status
+            path: /-/ready
             port: 9091
           initialDelaySeconds: 10
           timeoutSeconds: 10
@@ -806,7 +821,7 @@ spec:
         runAsUser: 65534
       serviceAccountName: prometheus-pushgateway
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -825,7 +840,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-9.1.0
+        chart: prometheus-9.7.0
         component: server
         heritage: Tiller
         release: prometheus
@@ -849,22 +864,26 @@ spec:
         - --web.console.libraries=/etc/prometheus/console_libraries
         - --web.console.templates=/etc/prometheus/consoles
         - --web.enable-lifecycle
-        image: prom/prometheus:v2.11.1
+        image: prom/prometheus:v2.13.1
         imagePullPolicy: IfNotPresent
         livenessProbe:
+          failureThreshold: 3
           httpGet:
             path: /-/healthy
             port: 9090
           initialDelaySeconds: 30
+          successThreshold: 1
           timeoutSeconds: 30
         name: prometheus-server
         ports:
         - containerPort: 9090
         readinessProbe:
+          failureThreshold: 3
           httpGet:
             path: /-/ready
             port: 9090
           initialDelaySeconds: 30
+          successThreshold: 1
           timeoutSeconds: 30
         resources: {}
         volumeMounts:
@@ -888,7 +907,7 @@ spec:
         persistentVolumeClaim:
           claimName: prometheus-server
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   labels:
@@ -906,7 +925,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-9.1.0
+        chart: prometheus-9.7.0
         component: node-exporter
         heritage: Tiller
         release: prometheus
@@ -942,6 +961,84 @@ spec:
         name: sys
   updateStrategy:
     type: RollingUpdate
+---
+apiVersion: extensions/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  annotations: null
+  labels:
+    app: prometheus
+    component: alertmanager
+    release: prometheus
+  name: prometheus-alertmanager
+spec:
+  allowPrivilegeEscalation: false
+  allowedHostPaths:
+  - pathPrefix: /etc
+    readOnly: true
+  - pathPrefix: /data
+  fsGroup:
+    ranges:
+    - max: 65535
+      min: 1
+    rule: MustRunAs
+  hostIPC: false
+  hostNetwork: false
+  hostPID: false
+  privileged: false
+  readOnlyRootFilesystem: true
+  requiredDropCapabilities:
+  - ALL
+  runAsUser:
+    rule: RunAsAny
+  seLinux:
+    rule: RunAsAny
+  supplementalGroups:
+    ranges:
+    - max: 65535
+      min: 1
+    rule: MustRunAs
+  volumes:
+  - configMap
+  - persistentVolumeClaim
+  - emptyDir
+  - secret
+---
+apiVersion: extensions/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  annotations: null
+  labels:
+    app: prometheus
+    component: kube-state-metrics
+    release: prometheus
+  name: prometheus-kube-state-metrics
+spec:
+  allowPrivilegeEscalation: false
+  allowedHostPaths: []
+  fsGroup:
+    ranges:
+    - max: 65535
+      min: 1
+    rule: MustRunAs
+  hostIPC: false
+  hostNetwork: false
+  hostPID: false
+  privileged: false
+  readOnlyRootFilesystem: true
+  requiredDropCapabilities:
+  - ALL
+  runAsUser:
+    rule: RunAsAny
+  seLinux:
+    rule: RunAsAny
+  supplementalGroups:
+    ranges:
+    - max: 65535
+      min: 1
+    rule: MustRunAs
+  volumes:
+  - secret
 ---
 apiVersion: extensions/v1beta1
 kind: PodSecurityPolicy
@@ -988,85 +1085,7 @@ spec:
   - hostPath
   - secret
 ---
-apiVersion: policy/v1beta1
-kind: PodSecurityPolicy
-metadata:
-  annotations: null
-  labels:
-    app: prometheus
-    component: alertmanager
-    release: prometheus
-  name: prometheus-alertmanager
-spec:
-  allowPrivilegeEscalation: false
-  allowedHostPaths:
-  - pathPrefix: /etc
-    readOnly: true
-  - pathPrefix: /data
-  fsGroup:
-    ranges:
-    - max: 65535
-      min: 1
-    rule: MustRunAs
-  hostIPC: false
-  hostNetwork: false
-  hostPID: false
-  privileged: false
-  readOnlyRootFilesystem: true
-  requiredDropCapabilities:
-  - ALL
-  runAsUser:
-    rule: RunAsAny
-  seLinux:
-    rule: RunAsAny
-  supplementalGroups:
-    ranges:
-    - max: 65535
-      min: 1
-    rule: MustRunAs
-  volumes:
-  - configMap
-  - persistentVolumeClaim
-  - emptyDir
-  - secret
----
-apiVersion: policy/v1beta1
-kind: PodSecurityPolicy
-metadata:
-  annotations: null
-  labels:
-    app: prometheus
-    component: kube-state-metrics
-    release: prometheus
-  name: prometheus-kube-state-metrics
-spec:
-  allowPrivilegeEscalation: false
-  allowedHostPaths: []
-  fsGroup:
-    ranges:
-    - max: 65535
-      min: 1
-    rule: MustRunAs
-  hostIPC: false
-  hostNetwork: false
-  hostPID: false
-  privileged: false
-  readOnlyRootFilesystem: true
-  requiredDropCapabilities:
-  - ALL
-  runAsUser:
-    rule: RunAsAny
-  seLinux:
-    rule: RunAsAny
-  supplementalGroups:
-    ranges:
-    - max: 65535
-      min: 1
-    rule: MustRunAs
-  volumes:
-  - secret
----
-apiVersion: policy/v1beta1
+apiVersion: extensions/v1beta1
 kind: PodSecurityPolicy
 metadata:
   annotations: null
@@ -1104,7 +1123,7 @@ spec:
   - persistentVolumeClaim
   - secret
 ---
-apiVersion: policy/v1beta1
+apiVersion: extensions/v1beta1
 kind: PodSecurityPolicy
 metadata:
   annotations: null
