@@ -364,6 +364,7 @@ spec:
             -advertise="${ADVERTISE_IP}" \
             -bind=0.0.0.0 \
             -client=0.0.0.0 \
+            -node-meta=pod-name:${HOSTNAME} \
             -hcl="ports { grpc = 8502 }" \
             -config-dir=/consul/config \
             -datacenter=dc1 \
