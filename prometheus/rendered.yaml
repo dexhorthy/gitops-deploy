@@ -531,6 +531,9 @@ data:
         - source_labels: [__meta_kubernetes_pod_label_component]
           regex: alertmanager
           action: keep
+        - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_probe]
+          regex: .*
+          action: keep
         - source_labels: [__meta_kubernetes_pod_container_port_number]
           regex:
           action: drop
@@ -675,7 +678,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-9.7.0
+        chart: prometheus-9.7.1
         component: alertmanager
         heritage: Tiller
         release: prometheus
@@ -754,7 +757,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-9.7.0
+        chart: prometheus-9.7.1
         component: kube-state-metrics
         heritage: Tiller
         release: prometheus
@@ -791,7 +794,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-9.7.0
+        chart: prometheus-9.7.1
         component: pushgateway
         heritage: Tiller
         release: prometheus
@@ -840,7 +843,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-9.7.0
+        chart: prometheus-9.7.1
         component: server
         heritage: Tiller
         release: prometheus
@@ -925,7 +928,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-9.7.0
+        chart: prometheus-9.7.1
         component: node-exporter
         heritage: Tiller
         release: prometheus
