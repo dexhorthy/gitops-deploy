@@ -449,6 +449,7 @@ metadata:
     app: consul
     release: consul
   name: consul-consul-test
+  namespace: default
 spec:
   containers:
   - command:
