@@ -678,7 +678,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-9.7.5
+        chart: prometheus-10.0.0
         component: alertmanager
         heritage: Tiller
         release: prometheus
@@ -688,14 +688,14 @@ spec:
         - --config.file=/etc/config/alertmanager.yml
         - --storage.path=/data
         - --cluster.advertise-address=$(POD_IP):6783
-        - --web.external-url=/
+        - --web.external-url=http://localhost:9093
         env:
         - name: POD_IP
           valueFrom:
             fieldRef:
               apiVersion: v1
               fieldPath: status.podIP
-        image: prom/alertmanager:v0.18.0
+        image: prom/alertmanager:v0.20.0
         imagePullPolicy: IfNotPresent
         name: prometheus-alertmanager
         ports:
@@ -716,7 +716,7 @@ spec:
       - args:
         - --volume-dir=/etc/config
         - --webhook-url=http://127.0.0.1:9093/-/reload
-        image: jimmidyson/configmap-reload:v0.2.2
+        image: jimmidyson/configmap-reload:v0.3.0
         imagePullPolicy: IfNotPresent
         name: prometheus-alertmanager-configmap-reload
         resources: {}
@@ -757,13 +757,13 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-9.7.5
+        chart: prometheus-10.0.0
         component: kube-state-metrics
         heritage: Tiller
         release: prometheus
     spec:
       containers:
-      - image: quay.io/coreos/kube-state-metrics:v1.6.0
+      - image: quay.io/coreos/kube-state-metrics:v1.9.0
         imagePullPolicy: IfNotPresent
         name: prometheus-kube-state-metrics
         ports:
@@ -794,14 +794,14 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-9.7.5
+        chart: prometheus-10.0.0
         component: pushgateway
         heritage: Tiller
         release: prometheus
     spec:
       containers:
       - args: []
-        image: prom/pushgateway:v0.8.0
+        image: prom/pushgateway:v1.0.1
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
@@ -843,7 +843,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-9.7.5
+        chart: prometheus-10.0.0
         component: server
         heritage: Tiller
         release: prometheus
@@ -852,7 +852,7 @@ spec:
       - args:
         - --volume-dir=/etc/config
         - --webhook-url=http://127.0.0.1:9090/-/reload
-        image: jimmidyson/configmap-reload:v0.2.2
+        image: jimmidyson/configmap-reload:v0.3.0
         imagePullPolicy: IfNotPresent
         name: prometheus-server-configmap-reload
         resources: {}
@@ -867,7 +867,7 @@ spec:
         - --web.console.libraries=/etc/prometheus/console_libraries
         - --web.console.templates=/etc/prometheus/consoles
         - --web.enable-lifecycle
-        image: prom/prometheus:v2.13.1
+        image: prom/prometheus:v2.15.2
         imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 3
@@ -928,7 +928,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-9.7.5
+        chart: prometheus-10.0.0
         component: node-exporter
         heritage: Tiller
         release: prometheus
@@ -937,7 +937,7 @@ spec:
       - args:
         - --path.procfs=/host/proc
         - --path.sysfs=/host/sys
-        image: prom/node-exporter:v0.18.0
+        image: prom/node-exporter:v0.18.1
         imagePullPolicy: IfNotPresent
         name: prometheus-node-exporter
         ports:
