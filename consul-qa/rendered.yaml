@@ -279,8 +279,8 @@ spec:
             - /bin/sh
             - -ec
             - |
-              curl http://127.0.0.1:8500/v1/status/leader 2>/dev/null | \
-              grep -E '".+"'
+              curl http://127.0.0.1:8500/v1/status/leader \
+              2>/dev/null | grep -E '".+"'
           failureThreshold: 2
           initialDelaySeconds: 5
           periodSeconds: 3
@@ -294,7 +294,7 @@ spec:
       securityContext:
         fsGroup: 1000
       serviceAccountName: consul-consul-server
-      terminationGracePeriodSeconds: 10
+      terminationGracePeriodSeconds: 30
       volumes:
       - configMap:
           name: consul-consul-server-config
@@ -365,7 +365,8 @@ spec:
             -bind=0.0.0.0 \
             -client=0.0.0.0 \
             -node-meta=pod-name:${HOSTNAME} \
-            -hcl="ports { grpc = 8502 }" \
+            -hcl='leave_on_terminate = true' \
+            -hcl='ports { grpc = 8502 }' \
             -config-dir=/consul/config \
             -datacenter=dc1 \
             -data-dir=/consul/data \
@@ -424,8 +425,8 @@ spec:
             - /bin/sh
             - -ec
             - |
-              curl http://127.0.0.1:8500/v1/status/leader 2>/dev/null | \
-              grep -E '".+"'
+              curl http://127.0.0.1:8500/v1/status/leader \
+              2>/dev/null | grep -E '".+"'
         volumeMounts:
         - mountPath: /consul/data
           name: data
@@ -457,7 +458,6 @@ spec:
     - -ec
     - |
       export VALUE="consul"
-      export CONSUL_HTTP_ADDR="${HOST_IP}:8500"
       consul kv delete _consul_helm_test
       consul kv put _consul_helm_test $VALUE
       [ `consul kv get _consul_helm_test` = "$VALUE" ]
@@ -467,6 +467,8 @@ spec:
       valueFrom:
         fieldRef:
           fieldPath: status.hostIP
+    - name: CONSUL_HTTP_ADDR
+      value: http://$(HOST_IP):8500
     image: consul:1.6.2
     name: consul-test
   restartPolicy: Never
