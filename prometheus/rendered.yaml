@@ -132,6 +132,7 @@ rules:
   - daemonsets
   - deployments
   - statefulsets
+  - replicasets
   verbs:
   - get
   - list
@@ -159,9 +160,32 @@ rules:
   - list
   - watch
 - apiGroups:
+  - storage.k8s.io
+  resources:
+  - storageclasses
+  - volumeattachments
+  verbs:
+  - list
+  - watch
+- apiGroups:
   - certificates.k8s.io
   resources:
   - certificatesigningrequests
+  verbs:
+  - list
+  - watch
+- apiGroups:
+  - networking.k8s.io
+  resources:
+  - networkpolicies
+  verbs:
+  - list
+  - watch
+- apiGroups:
+  - admissionregistration.k8s.io
+  resources:
+  - validatingwebhookconfigurations
+  - mutatingwebhookconfigurations
   verbs:
   - list
   - watch
@@ -678,7 +702,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-10.0.0
+        chart: prometheus-10.0.2
         component: alertmanager
         heritage: Tiller
         release: prometheus
@@ -757,7 +781,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-10.0.0
+        chart: prometheus-10.0.2
         component: kube-state-metrics
         heritage: Tiller
         release: prometheus
@@ -794,7 +818,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-10.0.0
+        chart: prometheus-10.0.2
         component: pushgateway
         heritage: Tiller
         release: prometheus
@@ -843,7 +867,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-10.0.0
+        chart: prometheus-10.0.2
         component: server
         heritage: Tiller
         release: prometheus
@@ -928,7 +952,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-10.0.0
+        chart: prometheus-10.0.2
         component: node-exporter
         heritage: Tiller
         release: prometheus
