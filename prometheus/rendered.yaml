@@ -611,6 +611,10 @@ spec:
     port: 80
     protocol: TCP
     targetPort: 8080
+  - name: telemetry
+    port: 81
+    protocol: TCP
+    targetPort: 8081
   selector:
     app: prometheus
     component: kube-state-metrics
@@ -702,7 +706,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-10.1.0
+        chart: prometheus-10.2.0
         component: alertmanager
         heritage: Tiller
         release: prometheus
@@ -781,18 +785,20 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-10.1.0
+        chart: prometheus-10.2.0
         component: kube-state-metrics
         heritage: Tiller
         release: prometheus
     spec:
       containers:
-      - image: quay.io/coreos/kube-state-metrics:v1.9.0
+      - image: quay.io/coreos/kube-state-metrics:v1.9.1
         imagePullPolicy: IfNotPresent
         name: prometheus-kube-state-metrics
         ports:
         - containerPort: 8080
           name: metrics
+        - containerPort: 8081
+          name: telemetry
         resources: {}
       securityContext:
         runAsNonRoot: true
@@ -818,7 +824,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-10.1.0
+        chart: prometheus-10.2.0
         component: pushgateway
         heritage: Tiller
         release: prometheus
@@ -867,7 +873,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-10.1.0
+        chart: prometheus-10.2.0
         component: server
         heritage: Tiller
         release: prometheus
@@ -952,7 +958,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-10.1.0
+        chart: prometheus-10.2.0
         component: node-exporter
         heritage: Tiller
         release: prometheus
