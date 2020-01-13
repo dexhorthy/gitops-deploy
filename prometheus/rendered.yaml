@@ -702,7 +702,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-10.0.2
+        chart: prometheus-10.1.0
         component: alertmanager
         heritage: Tiller
         release: prometheus
@@ -781,7 +781,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-10.0.2
+        chart: prometheus-10.1.0
         component: kube-state-metrics
         heritage: Tiller
         release: prometheus
@@ -818,7 +818,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-10.0.2
+        chart: prometheus-10.1.0
         component: pushgateway
         heritage: Tiller
         release: prometheus
@@ -867,7 +867,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-10.0.2
+        chart: prometheus-10.1.0
         component: server
         heritage: Tiller
         release: prometheus
@@ -952,7 +952,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-10.0.2
+        chart: prometheus-10.1.0
         component: node-exporter
         heritage: Tiller
         release: prometheus
