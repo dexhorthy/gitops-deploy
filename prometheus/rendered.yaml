@@ -747,7 +747,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-10.3.0
+        chart: prometheus-10.3.1
         component: alertmanager
         heritage: Tiller
         release: prometheus
@@ -771,7 +771,7 @@ spec:
         - containerPort: 9093
         readinessProbe:
           httpGet:
-            path: /#/status
+            path: /-/ready
             port: 9093
           initialDelaySeconds: 30
           timeoutSeconds: 30
@@ -826,7 +826,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-10.3.0
+        chart: prometheus-10.3.1
         component: kube-state-metrics
         heritage: Tiller
         release: prometheus
@@ -865,7 +865,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-10.3.0
+        chart: prometheus-10.3.1
         component: pushgateway
         heritage: Tiller
         release: prometheus
@@ -914,7 +914,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-10.3.0
+        chart: prometheus-10.3.1
         component: server
         heritage: Tiller
         release: prometheus
@@ -999,7 +999,7 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus-10.3.0
+        chart: prometheus-10.3.1
         component: node-exporter
         heritage: Tiller
         release: prometheus
