@@ -557,9 +557,9 @@ metadata:
 ---
 apiVersion: v1
 data:
-  sentry-secret: ZnVuRnFac2hvUTJnWVI3a0VwVXpIM0RpNFA4OFM0S2ZMRXlCcTlJTw==
+  sentry-secret: UEFJMlp4eU03cjIzZGNweVhhVkpocElMSmsyVHpJTzZKejVzRk9hVg==
   smtp-password: ""
-  user-password: eVFna2NBYVo3VVZwdmx6eg==
+  user-password: RENjcVh1czhwSVBzN2FhMQ==
 kind: Secret
 metadata:
   labels:
@@ -572,7 +572,7 @@ type: Opaque
 ---
 apiVersion: v1
 data:
-  postgresql-password: WGxRYjdzNDBjNw==
+  postgresql-password: ZFFGQzNVeXU2Ug==
 kind: Secret
 metadata:
   labels:
@@ -585,7 +585,7 @@ type: Opaque
 ---
 apiVersion: v1
 data:
-  redis-password: MlBqRHpITWlNNQ==
+  redis-password: QWdNTms3YzJ5Zw==
 kind: Secret
 metadata:
   labels:
@@ -762,7 +762,7 @@ spec:
     metadata:
       annotations:
         checksum/configYml: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
-        checksum/secrets.yaml: 3fc1979752f4767d9b2709852091a9ca503d5789a7b1ee64032f3b619b6aecef
+        checksum/secrets.yaml: 71c6100b66e6b1974ebd2d26d3d372da381284a29bce141c71a6a79a25e9f237
         checksum/sentryConfPy: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
         metrics-enabled: "true"
       labels:
@@ -913,7 +913,7 @@ spec:
     metadata:
       annotations:
         checksum/configYml: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
-        checksum/secrets.yaml: bbdb88f3a1b5bf8cd0cc5970ee25947843b101b8b3d0f22577f6643742b58b58
+        checksum/secrets.yaml: aee76191903625ec9017adf6b16becbdc8992fb68b3e77fbd31cf4cb6443a5eb
         checksum/sentryConfPy: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
         metrics-enabled: "true"
       labels:
@@ -1030,7 +1030,7 @@ spec:
     metadata:
       annotations:
         checksum/configYml: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
-        checksum/secrets.yaml: c39a187a55b684696318ab2183fadc13fe9b07eee0b37efcfb453d76b451c5de
+        checksum/secrets.yaml: 9449cb34b6ac1ac22f95751b2365e14fc1c4fbf61ca0cf14beb6d66f7c9bc4dd
         checksum/sentryConfPy: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
         metrics-enabled: "true"
       labels:
@@ -1250,7 +1250,7 @@ spec:
       annotations:
         checksum/configmap: 528690f85fa665dda5d9d3785443bef92f3f258d550d9ad32b44d4466a1f1c3d
         checksum/health: 474189667b35bed33b8f7741a09c5c44da699a98b099db4dfdb2b02b54ad05e9
-        checksum/secret: 46ec090a757638e9c63ea194a09afd8fa073197933664d204e6eefcf5046cc42
+        checksum/secret: cd46aa79aa115d29fcb9251d01ba2b59aac006e7af1b64ff3cc83ae74e596067
       labels:
         app: sentry-redis
         chart: redis-9.3.2
@@ -1381,7 +1381,7 @@ spec:
       annotations:
         checksum/configmap: 528690f85fa665dda5d9d3785443bef92f3f258d550d9ad32b44d4466a1f1c3d
         checksum/health: 474189667b35bed33b8f7741a09c5c44da699a98b099db4dfdb2b02b54ad05e9
-        checksum/secret: 3ffa94f0f08724b0dd083d9d66b2f566eaf43e487cc9abd84f9d0df6c5315e37
+        checksum/secret: c4ea87348fff455f81cce4016b11f83bad597a4e04738ec47fe3411bf3b2e1a2
       labels:
         app: sentry-redis
         chart: redis-9.3.2
@@ -1522,7 +1522,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/secrets.yaml: 011c6ae5b2935ecceaf599a594f46a2a262eecf998b79e7311175176cab8904e
+        checksum/secrets.yaml: 6eef4475b7eb5c0ec2b2f65c55a9a1871a4832c25f0aee520fffab9105fc87fa
       labels:
         app: gitlab-sentry
         release: gitlab
@@ -1610,7 +1610,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/secrets.yaml: a1d1acff28f4679d54fee5719f16998e2707b9ed99e5519879e58e6554e86d10
+        checksum/secrets.yaml: 01d53862f1189a6f033f3deb4ba4ff665b1467714caeefa149b2a7e0029ac06f
       labels:
         app: gitlab-sentry
         release: gitlab
@@ -1698,7 +1698,7 @@ metadata:
   name: gitlab-sentry
 spec:
   rules:
-  - host: I'm dex
+  - host: I'm dex dasdada
     http:
       paths:
       - backend:
