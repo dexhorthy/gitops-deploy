@@ -772,7 +772,7 @@ metadata:
     kots.io/backup: velero
   name: sentry-web
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: sentry
