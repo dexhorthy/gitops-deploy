@@ -365,6 +365,21 @@ metadata:
 ---
 apiVersion: v1
 data:
+  .dockerconfigjson: eyJhdXRocyI6eyJxdWF5LmlvIjp7ImF1dGgiOiJaR1Y0YUc5eWRHaDVPVEU2WlhWNFgwVlZWRE5xWkhjelluVjVJV3AwWWc9PSJ9fX0=
+kind: Secret
+metadata:
+  annotations:
+    kots.io/app-slug: sentry-pro
+  creationTimestamp: null
+  labels:
+    kots.io/app-slug: sentry-pro
+    kots.io/backup: velero
+  name: kotsadm-replicated-registry
+  namespace: kots-sentry-2
+type: kubernetes.io/dockerconfigjson
+---
+apiVersion: v1
+data:
   sentry-secret: YVFLV3NRcHl0WEgxYW56TnZIVlNCYmhVN2VPUE1pN1dSbnE3OU5NNA==
   smtp-password: cGFzc3dvcmQ=
   user-password: cGFzc3dvcmQ=
@@ -562,7 +577,7 @@ spec:
           value: "false"
         - name: SENTRY_SERVER_EMAIL
           value: sentry@sentry.local
-        image: sentry:9.1.1
+        image: quay.io/dexhorthy91/sentry:9.1.1
         imagePullPolicy: IfNotPresent
         name: sentry-cron
         ports:
@@ -580,6 +595,8 @@ spec:
           readOnly: true
         - mountPath: /var/lib/sentry/files
           name: sentry-data
+      imagePullSecrets:
+      - name: kotsadm-replicated-registry
       volumes:
       - configMap:
           name: sentry
@@ -640,7 +657,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.podIP
-        image: postgres:9.6
+        image: quay.io/dexhorthy91/postgres:9.6
         imagePullPolicy: ""
         livenessProbe:
           exec:
@@ -674,6 +691,8 @@ spec:
           subPath: postgresql-db
         - mountPath: /backup
           name: postgres-backup
+      imagePullSecrets:
+      - name: kotsadm-replicated-registry
       volumes:
       - name: data
         persistentVolumeClaim:
@@ -730,7 +749,7 @@ spec:
               name: sentry-redis
         - name: REDIS_DISABLE_COMMANDS
           value: FLUSHDB,FLUSHALL
-        image: docker.io/bitnami/redis:4.0.11-debian-9
+        image: quay.io/dexhorthy91/redis:4.0.11-debian-9
         imagePullPolicy: Always
         livenessProbe:
           exec:
@@ -756,6 +775,8 @@ spec:
           periodSeconds: 10
           successThreshold: 1
           timeoutSeconds: 1
+      imagePullSecrets:
+      - name: kotsadm-replicated-registry
       securityContext:
         fsGroup: 1001
         runAsUser: 1001
@@ -835,7 +856,7 @@ spec:
           value: ""
         - name: GITHUB_API_SECRET
           value: ""
-        image: sentry:9.1.1
+        image: quay.io/dexhorthy91/sentry:9.1.1
         imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 5
@@ -873,6 +894,8 @@ spec:
           readOnly: true
         - mountPath: /var/lib/sentry/files
           name: sentry-data
+      imagePullSecrets:
+      - name: kotsadm-replicated-registry
       volumes:
       - configMap:
           name: sentry
@@ -953,7 +976,7 @@ spec:
           value: "false"
         - name: SENTRY_SERVER_EMAIL
           value: sentry@sentry.local
-        image: sentry:9.1.1
+        image: quay.io/dexhorthy91/sentry:9.1.1
         imagePullPolicy: IfNotPresent
         name: sentry-workers
         ports:
@@ -971,6 +994,8 @@ spec:
           readOnly: true
         - mountPath: /var/lib/sentry/files
           name: sentry-data
+      imagePullSecrets:
+      - name: kotsadm-replicated-registry
       volumes:
       - configMap:
           name: sentry
@@ -1016,7 +1041,7 @@ spec:
               name: sentry-redis
         - name: REDIS_DISABLE_COMMANDS
           value: FLUSHDB,FLUSHALL
-        image: docker.io/bitnami/redis:4.0.11-debian-9
+        image: quay.io/dexhorthy91/redis:4.0.11-debian-9
         imagePullPolicy: Always
         livenessProbe:
           exec:
@@ -1046,6 +1071,8 @@ spec:
         - mountPath: /bitnami/redis/data
           name: redis-data
           subPath: null
+      imagePullSecrets:
+      - name: kotsadm-replicated-registry
       securityContext:
         fsGroup: 1001
         runAsUser: 1001
@@ -1137,12 +1164,14 @@ spec:
           value: "false"
         - name: SENTRY_SERVER_EMAIL
           value: sentry@sentry.local
-        image: sentry:9.1.1
+        image: quay.io/dexhorthy91/sentry:9.1.1
         name: db-init-job
         volumeMounts:
         - mountPath: /etc/sentry
           name: config
           readOnly: true
+      imagePullSecrets:
+      - name: kotsadm-replicated-registry
       restartPolicy: Never
       volumes:
       - configMap:
@@ -1233,12 +1262,14 @@ spec:
           value: "false"
         - name: SENTRY_SERVER_EMAIL
           value: sentry@sentry.local
-        image: sentry:9.1.1
+        image: quay.io/dexhorthy91/sentry:9.1.1
         name: user-create-job
         volumeMounts:
         - mountPath: /etc/sentry
           name: config
           readOnly: true
+      imagePullSecrets:
+      - name: kotsadm-replicated-registry
       restartPolicy: Never
       volumes:
       - configMap:
